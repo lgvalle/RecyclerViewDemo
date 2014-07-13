@@ -1,4 +1,5 @@
 Android L
+=========
 RecyclerView Demo App
 ==========
 
@@ -10,6 +11,10 @@ Featuring:
 + LinearLayoutManager
 + Palette
 
-![alt tag](https://raw.githubusercontent.com/lgvalle/RecyclerViewDemos/master/app/src/main/res/raw/screensehot1.png)
+
+<p align="center">
+  <img src="app/src/main/res/raw/screensehot1.png"/>
+</p>
+
 
 (Using Picasso for easy image loading)
