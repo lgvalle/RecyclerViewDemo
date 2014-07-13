@@ -113,7 +113,6 @@ public class DummyAdapter extends RecyclerView.Adapter<DummyAdapter.ViewHolder> 
         }
 
         public void updatePalette() {
-
             Bitmap bitmap = ((BitmapDrawable)mImageView.getDrawable()).getBitmap();
             Palette.generateAsync(bitmap, PALETTE_SIZE, new Palette.PaletteAsyncListener() {
                 @Override
