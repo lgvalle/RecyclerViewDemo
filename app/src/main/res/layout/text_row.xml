@@ -1,23 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_margin="5dp"
-    android:orientation="vertical"
+
+<com.pruebas.lgvalle.mispruebas.MeasurableTextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/text_row_title"
     android:layout_width="match_parent"
-    android:background="@android:color/holo_red_dark"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:ellipsize="end"
+    android:maxLines="2"
+    android:singleLine="false"
+    android:background="@android:color/holo_red_light"
 
-    <TextView
-        android:id="@+id/text_row_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:maxLines="2"
-        android:singleLine="false"
-        android:background="@android:color/holo_red_light"
+    android:textColor="@android:color/white"
+    android:layout_margin="10dp"
+    android:text="row text very very very very very very long text very very very very very very"
+    android:textSize="@dimen/font_size" />
 
-        android:textColor="@android:color/white"
-        android:layout_margin="10dp"
-        android:text="row text very very very very very very long text very very very very very very"
-        android:textSize="@dimen/font_size" />
-
-</LinearLayout>

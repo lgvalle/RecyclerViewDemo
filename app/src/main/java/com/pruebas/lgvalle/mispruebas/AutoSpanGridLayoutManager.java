@@ -1,19 +1,17 @@
 package com.pruebas.lgvalle.mispruebas;
 
 import android.content.Context;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
+import android.util.DisplayMetrics;
+import android.util.SparseIntArray;
 
 /**
  * Created by lgvalle on 31/01/15.
  */
 public class AutoSpanGridLayoutManager extends GridLayoutManager {
-    private static final String TAG = AutoSpanGridLayoutManager.class.getSimpleName();
-    private AutoMeasurablesAdapter adapter;
-    private RecyclerView recyclerView;
+    private SparseIntArray sparseIntArray;
+    private float columnWidth;
+
 
     public AutoSpanGridLayoutManager(Context context, int spanCount) {
         super(context, spanCount);
@@ -26,65 +24,29 @@ public class AutoSpanGridLayoutManager extends GridLayoutManager {
     }
 
 
-
-    private void init(final Context context, final int spanCount) {
-        this.adapter = new AutoMeasurablesAdapter();
+    private void init(Context context, int spanCount) {
+        sparseIntArray = new SparseIntArray();
+        columnWidth = calculateColumnWidth(context, spanCount);
         setSpanSizeLookup(new SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-
-                int spanSize = 1;
-                if (recyclerView != null ) {
-                    final int columWidth = recyclerView.getMeasuredWidth() / spanCount;
-                    Log.d(TAG, "ColunmWidth: "+columWidth);
-                    //MeasurableView m = (MeasurableView) getChildAt(position);
-                    //float viewWidth = m.automeasure();
-                    float viewWidth = innerMeasure(position, context);
-
-                    double calculatedSpan = Math.ceil(viewWidth / columWidth);
-
-                    spanSize = (int) Math.min(spanCount, Math.max(1, calculatedSpan));
-                }
-                Log.d(TAG, "SPAN: "+spanSize);
-                return spanSize;
+                return sparseIntArray.get(position);
             }
         });
     }
 
-    private float innerMeasure(int position, Context context) {
-        String node = getAdapter().getNodes().get(position);
-        int fontSize = context.getResources().getDimensionPixelSize(R.dimen.font_size);
-        Paint mTextPaint = new Paint();
-        mTextPaint.setTextSize(fontSize);
-        Rect textBounds = new Rect();
-        mTextPaint.getTextBounds(node, 0, node.length(), textBounds);
-        return mTextPaint.measureText(node);
+    private float calculateColumnWidth(Context context, int spanCount) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        return displayMetrics.widthPixels / spanCount;
     }
 
-    /*
-    final int columWidth = recyclerView.getMeasuredWidth() / spanCount;
-                    String node = adapter.getNodes().get(position);
-                    MeasurableView m = (MeasurableView) getChildAt(position);
-                    float viewWidth = m.automeasure();
-
-
-                    Paint mTextPaint = new Paint();
-                    mTextPaint.setTextSize(fontSize);
-                    Rect textBounds = new Rect();
-                    mTextPaint.getTextBounds(node, 0, node.length(), textBounds);
-                    float mTextWidth = mTextPaint.measureText(node);
-
-                    double calculatedSpan = Math.ceil(mTextWidth / columWidth);
-
-                    spanSize = (int) Math.min(spanCount, Math.max(1, calculatedSpan));
-     */
-
-    public AutoMeasurablesAdapter getAdapter() {
-        return adapter;
+    public void calculateItemSpan(int position, float viewWidth) {
+        double calculatedSpan = Math.ceil(viewWidth / columnWidth);
+        int spanSize = (int) Math.min(getSpanCount(), Math.max(1, calculatedSpan));
+        saveItemSpan(position, spanSize);
     }
 
-
-    public void setMyRecyclerView(RecyclerView recyclerView) {
-        this.recyclerView = recyclerView;
+    private void saveItemSpan(int position, int spanSize) {
+        sparseIntArray.put(position, spanSize);
     }
 }
