@@ -24,20 +24,4 @@
         android:padding="10dp"
         android:layout_alignBottom="@+id/imageView"
         android:layout_height="wrap_content" />
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/pbImage"
-        android:layout_margin="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        />
-
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/pbTitle"
-        android:layout_alignRight="@+id/title"
-        android:layout_alignBottom="@+id/title"
-        />
 </RelativeLayout>

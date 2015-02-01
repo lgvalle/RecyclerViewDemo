@@ -3,21 +3,16 @@ package com.pruebas.lgvalle.mispruebas;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.graphics.Palette;
-import android.support.v7.graphics.PaletteItem;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
@@ -39,7 +34,7 @@ public class DummyAdapter extends RecyclerView.Adapter<DummyAdapter.ViewHolder> 
     // Create new views (invoked by the layout manager)
     @Override
     public DummyAdapter.ViewHolder onCreateViewHolder(ViewGroup parent,
-                                                   int viewType) {
+                                                      int viewType) {
         // create a new view
         RelativeLayout v = (RelativeLayout) LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_row, null);
@@ -59,26 +54,7 @@ public class DummyAdapter extends RecyclerView.Adapter<DummyAdapter.ViewHolder> 
         Log.d(TAG, item.getUrl());
         Picasso.with(holder.mImageView.getContext())
                 .load(item.getUrl())
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        holder.mImageView.setImageBitmap(bitmap);
-                        holder.mLoadingImageView.setVisibility(View.GONE);
-                        holder.updatePalette();
-                        Log.d(TAG, "on success");
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-                        holder.mLoadingImageView.setVisibility(View.GONE);
-                        Log.d(TAG, "on error");
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-                        holder.mLoadingImageView.setVisibility(View.VISIBLE);
-                    }
-                });
+                .into(holder.mImageView);
         holder.mImageTitle.setText(item.getName());
 
     }
@@ -95,12 +71,15 @@ public class DummyAdapter extends RecyclerView.Adapter<DummyAdapter.ViewHolder> 
         notifyItemInserted(0);
     }
 
+    public void addLast(Item item) {
+        mDataset.add(item);
+        notifyDataSetChanged();
+    }
+
     // Provide a reference to the type of views that you are using
     // (custom viewholder)
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private static final int PALETTE_SIZE = 24; /* 24 is default size. You can decrease this value to speed up palette generation */
-        private final View mLoadingImageView;
-        private final View mLoadingTitleView;
         public ImageView mImageView;
         public TextView mImageTitle;
 
@@ -108,25 +87,18 @@ public class DummyAdapter extends RecyclerView.Adapter<DummyAdapter.ViewHolder> 
             super(v);
             mImageView = (ImageView) v.findViewById(R.id.imageView);
             mImageTitle = (TextView) v.findViewById(R.id.title);
-            mLoadingImageView = v.findViewById(R.id.pbImage);
-            mLoadingTitleView = v.findViewById(R.id.pbTitle);
-        }
 
+        }
         public void updatePalette() {
-            Bitmap bitmap = ((BitmapDrawable)mImageView.getDrawable()).getBitmap();
+            Bitmap bitmap = ((BitmapDrawable) mImageView.getDrawable()).getBitmap();
             Palette.generateAsync(bitmap, PALETTE_SIZE, new Palette.PaletteAsyncListener() {
                 @Override
                 public void onGenerated(Palette palette) {
-                    PaletteItem item = palette.getLightVibrantColor();
-                    if (item != null) {
-                        mImageTitle.setBackgroundColor(adjustAlpha(item.getRgb(), 0.5f));
-                    }
 
-                    item = palette.getDarkVibrantColor();
-                    if (item != null) {
-                        mImageTitle.setTextColor(item.getRgb());
-                    }
-                    mLoadingTitleView.setVisibility(View.GONE);
+                    int item = palette.getLightVibrantColor(0);
+                    mImageTitle.setBackgroundColor(adjustAlpha(item, 0.5f));
+                    item = palette.getDarkVibrantColor(1);
+                    mImageTitle.setTextColor(item);
                 }
 
             });

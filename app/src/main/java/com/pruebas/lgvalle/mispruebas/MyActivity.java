@@ -3,21 +3,24 @@ package com.pruebas.lgvalle.mispruebas;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.Arrays;
+
 
 public class MyActivity extends Activity {
 
-    private final String DUMMY_SERVICE = "https://placeimg.com/640/320/";
+    private static final int MAX = 4;
+    private final String DUMMY_SERVICE = "https://placeimg.com/640/480/any";
 
     private int numItems;
     private RecyclerView mRecyclerView;
-    private DummyAdapter mAdapter;
-    private LinearLayoutManager mLayoutManager;
-
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    private String[] nodes = {"I need a", "handyman", "at", "Flat 5 58 Cleveland Way E14UF, London", "to", "fix my toilet"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,11 +28,45 @@ public class MyActivity extends Activity {
         setContentView(R.layout.activity_my);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        mAdapter = new DummyAdapter();
-        mLayoutManager = new LinearLayoutManager(this);
+        mAdapter = getAdapter();
+        mLayoutManager = getLayoutManager();
 
         setupLayout();
 
+    }
+
+    private RecyclerView.Adapter getAdapter() {
+        return new AutoMeasurablesAdapter(Arrays.asList(nodes));
+    }
+
+    private RecyclerView.LayoutManager getLayoutManager() {
+        int longestSpan = getLongestSpan();
+        GridLayoutManager manager = new GridLayoutManager(this, longestSpan);
+        manager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                int nodeLength = nodes[position].length()/2;
+                if (nodeLength == 0) {
+                    nodeLength++;
+                }
+
+
+                return Math.min(MAX, nodeLength);
+
+            }
+        });
+        return manager;
+    }
+
+    private int getLongestSpan() {
+
+        int longestNode = 0;
+        for (String node : nodes) {
+            if (node.length() > longestNode) {
+                longestNode = node.length();
+            }
+        }
+        return Math.min(MAX, longestNode);
     }
 
     private void setupLayout() {
@@ -42,7 +79,7 @@ public class MyActivity extends Activity {
     @Override
     protected void onStart() {
         super.onStart();
-        mAdapter.addFirst(createDummyItem());
+
     }
 
     private Item createDummyItem() {
@@ -63,8 +100,8 @@ public class MyActivity extends Activity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_add) {
-            mAdapter.addFirst(createDummyItem());
-            mLayoutManager.scrollToPosition(0);
+
+
             return true;
         }
         return super.onOptionsItemSelected(item);
