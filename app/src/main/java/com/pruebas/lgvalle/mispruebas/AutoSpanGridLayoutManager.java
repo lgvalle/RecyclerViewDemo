@@ -3,12 +3,14 @@ package com.pruebas.lgvalle.mispruebas;
 import android.content.Context;
 import android.support.v7.widget.GridLayoutManager;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.util.SparseIntArray;
 
 /**
  * Created by lgvalle on 31/01/15.
  */
 public class AutoSpanGridLayoutManager extends GridLayoutManager {
+    private static final String TAG = AutoSpanGridLayoutManager.class.getSimpleName();
     private SparseIntArray sparseIntArray;
     private float columnWidth;
 
@@ -24,13 +26,16 @@ public class AutoSpanGridLayoutManager extends GridLayoutManager {
     }
 
 
-    private void init(Context context, int spanCount) {
+    private void init(Context context, final int spanCount) {
         sparseIntArray = new SparseIntArray();
         columnWidth = calculateColumnWidth(context, spanCount);
+
         setSpanSizeLookup(new SpanSizeLookup() {
             @Override
             public int getSpanSize(int position) {
-                return sparseIntArray.get(position);
+                int spanSize = Math.max(1, sparseIntArray.get(position));
+                //Log.d(TAG, "> Span size: "+spanSize);
+                return spanSize;
             }
         });
     }
@@ -41,8 +46,14 @@ public class AutoSpanGridLayoutManager extends GridLayoutManager {
     }
 
     public void calculateItemSpan(int position, float viewWidth) {
+        Log.d(TAG, "Calculate item span: "+position);
+        Log.d(TAG, "- viewWidth: "+viewWidth);
+        Log.d(TAG, "- columnWidth: "+columnWidth);
         double calculatedSpan = Math.ceil(viewWidth / columnWidth);
+        Log.d(TAG, "- calculated:: "+calculatedSpan);
+
         int spanSize = (int) Math.min(getSpanCount(), Math.max(1, calculatedSpan));
+        Log.d(TAG, "- final: "+spanSize);
         saveItemSpan(position, spanSize);
     }
 

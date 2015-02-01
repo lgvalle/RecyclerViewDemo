@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.widget.TextView;
 
 /**
@@ -37,12 +38,15 @@ public class MeasurableTextView extends TextView implements MeasurableView {
     @Override
     public float automeasure() {
         if (textSize == 0) {
+
             String node = getText().toString();
+
             Paint mTextPaint = new Paint();
             mTextPaint.setTextSize(fontSize);
             Rect textBounds = new Rect();
             mTextPaint.getTextBounds(node, 0, node.length(), textBounds);
             textSize = mTextPaint.measureText(node);
+            Log.d(TAG, "Measured: "+node+" = ");
         }
         return textSize;
     }
